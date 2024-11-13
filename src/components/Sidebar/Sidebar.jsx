@@ -161,7 +161,7 @@ const SideBar = () => {
                     ></path>
                   </svg>
                 </a>
-                <div className="text-white translate transform overflow-hidden hidden">
+                <div className="text-white translate transform overflow-hidden ">
                   <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                     <li>
                       <a
@@ -353,7 +353,7 @@ const SideBar = () => {
                     ></path>
                   </svg>
                 </a>
-                <div className="translate transform overflow-hidden hidden">
+                <div className="translate transform overflow-hidden ">
                   <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                     <li>
                       <a
@@ -426,7 +426,7 @@ const SideBar = () => {
                     ></path>
                   </svg>
                 </a>
-                <div className="translate transform overflow-hidden hidden">
+                <div className="translate transform overflow-hidden ">
                   <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                     <li>
                       <a
