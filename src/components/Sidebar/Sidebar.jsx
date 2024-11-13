@@ -3,7 +3,7 @@ const SideBar = () => {
     <div className="absolute left-0 top-0 p-4 flex overflow-y-hidden flex-col h-screen w-72.5 bg-black lg:static ">
       <div className="flex items-center justify-between gap-2 px-3 mt-4 py-5.5 lg:py-6.5">
         <a href="/">
-          <img src="/public/images/logo/logo.svg" alt="" />
+          <img src={"/public/static/images/logo/logo.svg"} alt="" />
         </a>
       </div>
 
