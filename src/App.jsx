@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Loader from "./common/Loader";
 import SignUp from "./pages/Authentication/Signup";
 import DefaultLayout from "./layouts/DefaultLayout";
+import SignIn from "./pages/Authentication/Signin";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -26,7 +27,6 @@ function App() {
   return loading ? (
     <div>
       <Loader />
-
     </div>
   ) : (
     <>
@@ -48,6 +48,16 @@ function App() {
               <>
                 <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
                 <SignUp />
+              </>
+            }
+          />
+
+          <Route
+            path="/auth/signin"
+            element={
+              <>
+                <PageTitle title="SignIn | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <SignIn />
               </>
             }
           />

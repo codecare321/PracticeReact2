@@ -7,7 +7,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "./css/satoshi.css";
 import "flatpickr/dist/flatpickr.min.css";
 import "jsvectormap/dist/jsvectormap.css";
-
+import "react-toastify/dist/ReactToastify.css";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router future={{ v7_startTransition: true }}>

@@ -1,4 +1,61 @@
+import { useState } from "react";
+
 const SideBar = () => {
+  const [expandedStates, setExpandedStates] = useState({
+    expanded: false,
+    expanded2: false,
+    expanded3: false,
+    expanded4: false,
+  });
+
+  function toggle(key) {
+    setExpandedStates((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  }
+
+  function svgToggle({ isExpanded, toggleKey }) {
+    return (
+      <>
+        {isExpanded ? (
+          <svg
+            className="absolute  right-0  top-1/2 -translate-y-1/2 fill-current false"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            onClick={() => toggle(toggleKey)}
+          >
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+              fill=""
+            ></path>
+          </svg>
+        ) : (
+          <svg
+            className="absolute  right-0  top-1/2 -translate-y-1/2 fill-current false"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            onClick={() => toggle(toggleKey)}
+          >
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+              fill=""
+            ></path>
+          </svg>
+        )}
+      </>
+    );
+  }
   return (
     <div className="absolute left-0 top-0 p-4 flex overflow-y-hidden flex-col h-screen w-72.5 bg-black lg:static ">
       <div className="flex items-center justify-between gap-2 px-3 mt-4 py-5.5 lg:py-6.5">
@@ -43,31 +100,22 @@ const SideBar = () => {
                     ></path>
                   </svg>
                   Dashboard
-                  <svg
-                    className="absolute right-4 top-1/2 -translate-y-1/2 fill-current rotate-180"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
-                      fill=""
-                    ></path>
-                  </svg>
+                  {svgToggle({
+                    isExpanded: expandedStates.expanded,
+                    toggleKey: "expanded",
+                  })}
                 </a>
-                <div className="translate transform overflow-hidden false">
-                  <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                    <li>
-                      <a className="group relative flex items-center gap-2.5 rounded-md px-4 duration-300 ease-in-out font-medium text-white">
-                        eCommerce
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+                {expandedStates.expanded ? (
+                  <div className="translate transform overflow-hidden false">
+                    <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                      <li>
+                        <a className="group relative flex items-center gap-2.5 rounded-md px-4 duration-300 ease-in-out font-medium text-white">
+                          eCommerce
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                ) : null}
               </li>
               <li>
                 <a className="text-white group relative flex items-center gap-2.5 rounded-sm py-2 font-medium duration-300 ease-in-out">
@@ -113,7 +161,6 @@ const SideBar = () => {
                 <a
                   aria-current="page"
                   className="group relative flex items-center gap-2.5 rounded-sm py-2  font-medium text-white duration-300 ease-in-out"
-                  href="/"
                 >
                   <svg
                     className="fill-current"
@@ -145,7 +192,7 @@ const SideBar = () => {
                     ></path>
                   </svg>
                   Forms
-                  <svg
+                  {/* <svg
                     className="absolute right-4 top-1/2 -translate-y-1/2 fill-current false"
                     width="20"
                     height="20"
@@ -159,28 +206,34 @@ const SideBar = () => {
                       d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
                       fill=""
                     ></path>
-                  </svg>
+                  </svg> */}
+                  {svgToggle({
+                    isExpanded: expandedStates.expanded2,
+                    toggleKey: "expanded2",
+                  })}
                 </a>
-                <div className="text-white translate transform overflow-hidden ">
-                  <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                    <li>
-                      <a
-                        className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
-                        href="/forms/form-elements"
-                      >
-                        Form Elements
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
-                        href="/forms/form-layout"
-                      >
-                        Form Layout
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+                {expandedStates.expanded2 ? (
+                  <div className="text-white translate transform overflow-hidden ">
+                    <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                      <li>
+                        <a
+                          className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
+                          href="/forms/form-elements"
+                        >
+                          Form Elements
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
+                          href="/forms/form-layout"
+                        >
+                          Form Layout
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                ) : null}
               </li>
               <li>
                 <a
@@ -301,7 +354,6 @@ const SideBar = () => {
                 <a
                   aria-current="page"
                   className="group relative flex items-center gap-2.5 rounded-sm  py-2 font-medium text-white duration-300 ease-in-out"
-                  href="/"
                 >
                   <svg
                     className="fill-current"
@@ -337,48 +389,38 @@ const SideBar = () => {
                     </defs>
                   </svg>
                   UI Elements
-                  <svg
-                    className="absolute right-0 top-1/2 -translate-y-1/2 fill-current false"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
-                      fill=""
-                    ></path>
-                  </svg>
+                  {svgToggle({
+                    isExpanded: expandedStates.expanded3,
+                    toggleKey: "expanded3",
+                  })}
                 </a>
-                <div className="translate transform overflow-hidden ">
-                  <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                    <li>
-                      <a
-                        className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
-                        href="/ui/alerts"
-                      >
-                        Alerts
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out"
-                        href="/ui/buttons"
-                      >
-                        Buttons
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+                {expandedStates.expanded3 ? (
+                  <div className="translate transform overflow-hidden ">
+                    <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
+                      <li>
+                        <a
+                          className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
+                          href="/ui/alerts"
+                        >
+                          Alerts
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out"
+                          href="/ui/buttons"
+                        >
+                          Buttons
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                ) : null}
               </li>
               <li>
                 <a
                   aria-current="page"
                   className="group relative flex items-center gap-2.5 rounded-sm py-2  font-medium text-white duration-300 ease-in-out"
-                  href="/"
                 >
                   <svg
                     className="fill-current"
@@ -410,7 +452,7 @@ const SideBar = () => {
                     </defs>
                   </svg>
                   Authentication
-                  <svg
+                  {/* <svg
                     className="absolute  right-0  top-1/2 -translate-y-1/2 fill-current false"
                     width="20"
                     height="20"
@@ -424,28 +466,34 @@ const SideBar = () => {
                       d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
                       fill=""
                     ></path>
-                  </svg>
+                  </svg> */}
+                  {svgToggle({
+                    isExpanded: expandedStates.expanded4,
+                    toggleKey: "expanded4",
+                  })}
                 </a>
-                <div className="translate transform overflow-hidden ">
-                  <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                    <li>
-                      <a
-                        className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
-                        href="/auth/signin"
-                      >
-                        Sign In
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
-                        href="/auth/signup"
-                      >
-                        Sign Up
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+                {expandedStates.expanded4 ? (
+                  <div className="translate transform overflow-hidden ">
+                    <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                      <li>
+                        <a
+                          className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
+                          href="/auth/signin"
+                        >
+                          Sign In
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          className="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-white duration-300 ease-in-out hover:text-white false"
+                          href="/auth/signup"
+                        >
+                          Sign Up
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                ) : null}
               </li>
             </ul>
           </div>
