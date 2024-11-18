@@ -1,126 +1,100 @@
-import BrandOne from "../../images/brand/brand-01.svg";
-import BrandTwo from "../../images/brand/brand-02.svg";
-import BrandThree from "../../images/brand/brand-03.svg";
-import BrandFour from "../../images/brand/brand-04.svg";
-import BrandFive from "../../images/brand/brand-05.svg";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import PropTypes from "prop-types";
+const TableOne = ({ page, rowsPerPage }) => {
+  const [value, setValue] = useState([]);
+  console.log("Current value state:", value);
 
-const brandData = [
-  {
-    logo: BrandOne,
-    name: "Google",
-    visitors: 3.5,
-    revenues: "5,768",
-    sales: 590,
-    conversion: 4.8,
-  },
-  {
-    logo: BrandTwo,
-    name: "Twitter",
-    visitors: 2.2,
-    revenues: "4,635",
-    sales: 467,
-    conversion: 4.3,
-  },
-  {
-    logo: BrandThree,
-    name: "Github",
-    visitors: 2.1,
-    revenues: "4,290",
-    sales: 420,
-    conversion: 3.7,
-  },
-  {
-    logo: BrandFour,
-    name: "Vimeo",
-    visitors: 1.5,
-    revenues: "3,580",
-    sales: 389,
-    conversion: 2.5,
-  },
-  {
-    logo: BrandFive,
-    name: "Facebook",
-    visitors: 3.5,
-    revenues: "6,768",
-    sales: 390,
-    conversion: 4.2,
-  },
-];
+  const baseUrl = "http://localhost:3000";
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/v1/AllUsers`);
+        console.log(response.data);
+        setValue(response.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
 
-const TableOne = () => {
+  const paginatedData = value.slice(
+    page * rowsPerPage,
+    (page + 1) * rowsPerPage
+  );
+  console.log("Paginated data:", paginatedData);
+
   return (
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-      <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-        Top Channels
+    <div className="rounded-sm border  border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+      <h4 className="text-center text-[30px] mb-6 text-xl font-semibold text-black dark:text-white">
+        User Lists
       </h4>
-
-      <div className="flex flex-col">
-        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
-          <div className="p-2.5 xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Source
-            </h5>
-          </div>
-          <div className="p-2.5 text-center xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Visitors
-            </h5>
-          </div>
-          <div className="p-2.5 text-center xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Revenues
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Sales
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Conversion
-            </h5>
-          </div>
+      {/* <hr style="border: 1px solid #000; margin: 10px 0;" /> */}
+      <hr />
+      <div className="grid grid-cols-3 sm:grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 p-2.5 xl:p-5">
+        <div>
+          <h5 className="text-sm font-medium uppercase">ID</h5>
+        </div>
+        <div className="text-center">
+          <h5 className="text-sm font-medium uppercase">Name</h5>
+        </div>
+        <div className="text-center">
+          <h5 className="text-sm font-medium uppercase">Email</h5>
+        </div>
+        <div className="text-center">
+          <h5 className="text-sm font-medium uppercase">Password</h5>
         </div>
 
-        {brandData.map((brand, key) => (
+        <div className="text-center">
+          <h5 className="text-sm font-medium uppercase">Actions</h5>
+        </div>
+      </div>
+
+      <hr />
+
+      {/* Table Data */}
+      {paginatedData.length > 0 ? (
+        paginatedData.map((item) => (
           <div
-            className={`grid grid-cols-3 sm:grid-cols-5 ${
-              key === brandData.length - 1
-                ? ""
-                : "border-b border-stroke dark:border-strokedark"
-            }`}
-            key={key}
+            className="grid grid-cols-3 sm:grid-cols-5 border-b border-stroke dark:border-strokedark p-2.5 xl:p-5"
+            key={item.id}
           >
-            <div className="flex items-center gap-3 p-2.5 xl:p-5">
-              <div className="flex-shrink-0">
-                <img src={brand.logo} alt="Brand" />
-              </div>
-              <p className="hidden text-black dark:text-white sm:block">
-                {brand.name}
+            <div className="flex items-center gap-3">
+              <p className="text-black dark:text-white">{item.id}</p>
+            </div>
+            <div className="flex items-center justify-center">
+              <p className="text-black dark:text-white">{item.name}</p>
+            </div>
+            <div className="flex items-center justify-center">
+              <p className="text-black dark:text-white">{item.email}</p>
+            </div>
+            <div className="flex items-center justify-center">
+              <p className="text-meta-3">
+                {item.password.slice(0, 10) + "..."}
               </p>
             </div>
 
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{brand.visitors}K</p>
-            </div>
-
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-meta-3">${brand.revenues}</p>
-            </div>
-
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-black dark:text-white">{brand.sales}</p>
-            </div>
-
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-meta-5">{brand.conversion}%</p>
+            <div className="flex items-center justify-center">
+              <button className="border rounded-lg bg-red-500 p-2 mr-3">
+                Delete
+              </button>
+              <button className="border rounded-lg bg-yellow-400 p-2">
+                Update
+              </button>
             </div>
           </div>
-        ))}
-      </div>
+        ))
+      ) : (
+        <p>No data available</p>
+      )}
     </div>
   );
 };
 
 export default TableOne;
+
+TableOne.propTypes = {
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+};

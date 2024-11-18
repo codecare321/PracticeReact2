@@ -2,8 +2,10 @@ import { useState } from "react";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-const SignIn = () => {
+import { Link, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+
+const SignIn = ({ setAuth }) => {
   const navigate = useNavigate();
 
   const dev_url = "http://localhost:3000";
@@ -15,14 +17,18 @@ const SignIn = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
     axios
       .post(`${dev_url}/api/v1/signin`, formData)
       .then((response) => {
+        const token = response.data.token;
         console.log("Success response:", response);
-        toast.success("Signin succesfully");
+        toast.success("Signin successfully");
+        setAuth(true);
+        localStorage.setItem("authToken", token);
         setTimeout(() => {
           navigate("/");
-        }, 1800);
+        }, 1500);
       })
       .catch((err) => {
         toast.error("Signin failed!");
@@ -262,9 +268,18 @@ const SignIn = () => {
                   </div>
                 </div>
                 <div className="mb-5">
-                  <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50">
+                  <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-slate-700 text-white	 p-4 hover:bg-opacity-50 ">
                     Sign in
                   </button>
+                </div>
+
+                <div className="mt-6 text-center">
+                  <p>
+                    Dont have an account?{" "}
+                    <Link to="/auth/signup" className="text-primary !important">
+                      Sign up
+                    </Link>
+                  </p>
                 </div>
               </form>
             </div>
@@ -276,3 +291,7 @@ const SignIn = () => {
 };
 
 export default SignIn;
+
+SignIn.propTypes = {
+  setAuth: PropTypes.func.isRequired,
+};

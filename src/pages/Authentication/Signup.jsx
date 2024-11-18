@@ -360,14 +360,14 @@ const SignUp = () => {
                   </div>
                 </div>
 
-                <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50">
+                <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50  bg-slate-700 text-white ">
                   Sign up
                 </button>
 
                 <div className="mt-6 text-center">
                   <p>
                     Already have an account?{" "}
-                    <Link to="/auth/signin" className="text-primary">
+                    <Link to="/auth/signin" className="text-primary !important">
                       Sign in
                     </Link>
                   </p>
