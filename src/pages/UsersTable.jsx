@@ -1,7 +1,6 @@
 import TablePagination from "@mui/material/TablePagination";
 import { useState } from "react";
 import TableOne from "../components/Tables/TableOne";
-import { Tab } from "@mui/material";
 const UserTables = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
