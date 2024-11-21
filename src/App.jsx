@@ -13,6 +13,7 @@ import { Navigate } from "react-router-dom";
 import axios from "axios";
 import ProtectedRoute from "./pages/Authentication/ProtectedRoute";
 import UserTables from "./pages/UsersTable";
+import OtpContainer from "./pages/Authentication/otp/OtpContainer";
 function App() {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState(false);
@@ -127,7 +128,7 @@ function App() {
             element={
               <>
                 <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-                <SignUp />
+                <SignUp setAuth={setAuth} />
               </>
             }
           />
@@ -137,6 +138,16 @@ function App() {
               <>
                 <PageTitle title="SignIn | TailAdmin - Tailwind CSS Admin Dashboard Template" />
                 <SignIn setAuth={setAuth} />
+              </>
+            }
+          />
+
+          <Route
+            path="/auth/verify-otp"
+            element={
+              <>
+                <PageTitle title="Verify-Otp | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <OtpContainer />
               </>
             }
           />

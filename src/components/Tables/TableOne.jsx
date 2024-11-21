@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
-
+import { ToastContainer, toast } from "react-toastify";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import FormDialog from "../Maps/FormDialog";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 const TableOne = ({ page, rowsPerPage }) => {
+  const [paginatedData, setPaginatedData] = useState([]);
+
   const [value, setValue] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,12 +21,88 @@ const TableOne = ({ page, rowsPerPage }) => {
 
   const [open, setOpen] = useState(false);
 
+  const [showHidePassword, setShowHidePassword] = useState({});
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     retypePassword: "",
   });
+
+  const [copySuccess, setCopySuccess] = useState({});
+
+  //useEffect for pagination
+  useEffect(() => {
+    const updatedData = Array.isArray(
+      searchQuery && searchQuery.trim() !== "" ? result : value
+    )
+      ? (searchQuery && searchQuery.trim() !== "" ? result : value).slice(
+          page * rowsPerPage,
+          (page + 1) * rowsPerPage
+        )
+      : [];
+    setPaginatedData(updatedData);
+  }, [value, result, searchQuery, page, rowsPerPage]);
+
+  // search user
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("authToken");
+
+      try {
+        const response = await axios.get(`${baseUrl}/api/v1/searchUser/`, {
+          params: {
+            name: searchQuery,
+            page: page + 1,
+            pageSize: rowsPerPage,
+          },
+
+          headers: {
+            Authorization: `${token}`,
+            Accept: "application/json, text/plain, */*",
+          },
+        });
+        console.log("search response", response.data);
+        setResult(response.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [searchQuery, page, rowsPerPage]);
+
+  
+  const isClickedIcon = (id) => {
+    setShowHidePassword((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const copyToClipboard = async (copyMe) => {
+    try {
+      await navigator.clipboard.writeText(copyMe).then(() => {
+        setCopySuccess((prev) => ({
+          ...prev,
+          [copyMe]: "Copied",
+        }));
+        setTimeout(() => {
+          setCopySuccess((prev) => {
+            const newState = { ...prev };
+            delete newState[copyMe];
+            return newState;
+          });
+        }, 1000);
+      });
+    } catch (err) {
+      setCopySuccess((prev) => ({
+        ...prev,
+        [copyMe]: "Failed to copy",
+      }));
+      console.log(err);
+    }
+  };
 
   const handleClickOpen = (editingItem = null) => {
     if (editingItem) {
@@ -60,14 +141,6 @@ const TableOne = ({ page, rowsPerPage }) => {
     });
   };
 
-  // const handleUserInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [name]: value,
-  //   }));
-  // };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -81,7 +154,7 @@ const TableOne = ({ page, rowsPerPage }) => {
     setSearchQuery(event.target.value);
 
     const filterData = value.filter((user) => {
-      user.name.includes(setSearchQuery);
+      user.name.includes(searchQuery);
     });
 
     setResult(filterData);
@@ -97,10 +170,19 @@ const TableOne = ({ page, rowsPerPage }) => {
   const baseUrl = "http://localhost:3000";
   useEffect(() => {
     const fetchData = async () => {
+      const token = localStorage.getItem("authToken");
       try {
-        const response = await axios.get(`${baseUrl}/api/v1/AllUsers`);
+        const response = await axios.get(`${baseUrl}/api/v1/AllUsers`, {
+          headers: {
+            Authorization: `${token}`,
+            Accept: "application/json, text/plain, */*",
+          },
+        });
+        const sortedData = response.data.data.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
         console.log(response.data);
-        setValue(response.data.data);
+        setValue(sortedData);
       } catch (err) {
         console.log(err);
       }
@@ -109,8 +191,17 @@ const TableOne = ({ page, rowsPerPage }) => {
   }, []);
 
   async function deleteUser(id) {
+    const token = localStorage.getItem("authToken");
     try {
-      const response = await axios.delete(`${baseUrl}/api/v1/deleteUser/${id}`);
+      const response = await axios.delete(
+        `${baseUrl}/api/v1/deleteUser/${id}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+            Accept: "application/json, text/plain, */*",
+          },
+        }
+      );
       const confirmation = confirm(
         `Are you sure you want to delete this user ${id} ?`
       );
@@ -119,16 +210,19 @@ const TableOne = ({ page, rowsPerPage }) => {
       }
       console.log(response.data);
       console.log("Is value an array:", Array.isArray(response.data.data));
+      console.log("Before delete", value);
 
       setValue((prevValue) =>
         Array.isArray(prevValue)
           ? prevValue.filter((user) => user.id !== id)
           : []
       );
+      console.log("after delete", value);
     } catch (err) {
       console.log(err);
     }
   }
+
   const handleSubmit = async () => {
     if (!formData.name || !formData.email || !formData.password) {
       alert("All fields are required");
@@ -142,22 +236,48 @@ const TableOne = ({ page, rowsPerPage }) => {
 
     try {
       if (isEditing) {
+        const token = localStorage.getItem("authToken");
         const response = await axios.put(
           `${baseUrl}/api/v1/updateUser/${editingId}`,
-          formData
+          formData,
+          {
+            headers: {
+              Authorization: `${token}`,
+              Accept: "application/json, text/plain, */*",
+            },
+          }
         );
+
         setValue((prev) => {
-          const updatedList = prev.map((user) =>
+          console.log("before the update", prev);
+          const newList = prev.map((user) =>
             user.id === editingId ? { ...user, ...response.data.data } : user
           );
 
-          return updatedList.sort(
+          console.log("after the update", newList);
+
+          return newList.sort(
             (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
           );
         });
-        alert("User updated successfully");
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 700);
+
+        toast.success("User updated successfully");
       } else {
-        const response = await axios.post(`${baseUrl}/api/v1/signup`, formData);
+        const token = localStorage.getItem("authToken");
+        const response = await axios.post(
+          `${baseUrl}/api/v1/signup`,
+          formData,
+          {
+            headers: {
+              Authorization: `${token}`,
+              Accept: "application/json, text/plain, */*",
+            },
+          }
+        );
         setValue((prev) => {
           const newList = [response.data.data, ...prev];
           console.log(newList);
@@ -165,40 +285,33 @@ const TableOne = ({ page, rowsPerPage }) => {
             (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
           );
         });
-        alert("User added successfully");
+
+        toast.success("User added successfully");
       }
       handleClose();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to submit");
+      toast.error("User Add failed!");
     }
   };
 
-  const paginatedData = Array.isArray(result)
-    ? result.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
-    : [];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/api/v1/searchUser/`, {
-          params: {
-            name: searchQuery,
-            page: page + 1,
-            pageSize: rowsPerPage,
-          },
-        });
-        console.log("search response", response.data);
-        setResult(response.data.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchData();
-  }, [searchQuery]);
+  // const paginatedData = Array.isArray(
+  //   searchQuery && searchQuery.trim() !== "" ? result : value
+  // )
+  //   ? (searchQuery && searchQuery.trim() !== "" ? result : value).slice(
+  //       page * rowsPerPage,
+  //       (page + 1) * rowsPerPage
+  //     )
+  //   : [];
 
   return (
     <div className="rounded-sm border  border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+      <ToastContainer
+        autoClose={1500}
+        hideProgressBar={false}
+        pauseOnHover={true}
+        draggable={true}
+      />
       <h4 className=" text-[30px] mb-6 text-xl font-semibold text-black dark:text-white">
         User Lists
       </h4>
@@ -265,8 +378,36 @@ const TableOne = ({ page, rowsPerPage }) => {
             </div>
             <div className="flex items-center justify-center">
               <p className="text-meta-3">
-                {item.password.slice(0, 10) + "..."}
+                {showHidePassword[item.id]
+                  ? item.password.slice(0, 10) + "..."
+                  : "**********"}
               </p>
+              <p className="text-meta-3 mb-2">
+                {showHidePassword[item.id] ? (
+                  <VisibilityIcon
+                    onClick={() => {
+                      isClickedIcon(item.id);
+                    }}
+                  />
+                ) : (
+                  <VisibilityOffIcon
+                    onClick={() => {
+                      isClickedIcon(item.id);
+                    }}
+                  />
+                )}
+              </p>
+
+              <button
+                onClick={() => {
+                  copyToClipboard(item.password);
+                }}
+              >
+                <ContentCopyIcon />
+                {copySuccess[item.password] && (
+                  <span>{copySuccess[item.password]}</span>
+                )}
+              </button>
             </div>
 
             <div className="flex items-center justify-center">

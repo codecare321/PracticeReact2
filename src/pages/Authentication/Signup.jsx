@@ -2,30 +2,44 @@ import { Link } from "react-router-dom";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import LogoDark from "../../images/logo/logo-dark.svg";
 import Logo from "../../images/logo/logo.svg";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
+import { useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 const SignUp = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    retypePassword: "",
-  });
+  // const [formData, setFormData] = useState({
+  //   name: "",
+  //   email: "",
+  //   password: "",
+  //   retypePassword: "",
+  // });
+
+  const nameRef = useRef();
+
+  const emailRef = useRef();
+
+  const passwordRef = useRef();
+
+  const retypePasswordRef = useRef();
   const dev_url = "http://localhost:3000";
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    const formData = {
+      name: nameRef.current.value,
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+      retypePassword: retypePasswordRef.current.value,
+    };
     axios
       .post(`${dev_url}/api/v1/signup`, formData)
       .then((response) => {
         console.log("Success response:", response);
         toast.success("Signup succesfully");
         setTimeout(() => {
-          navigate("/auth/signin");
+          navigate("/auth/verify-otp", { state: { formData } });
         }, 1800);
       })
       .catch((err) => {
@@ -35,11 +49,11 @@ const SignUp = () => {
 
     console.log("Form submitted", formData);
   };
-  useEffect(() => {
-    axios.get(`${dev_url}/api/v1/AllUsers`).then((res) => {
-      console.log(res.data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`${dev_url}/api/v1/AllUsers`).then((res) => {
+  //     console.log(res.data);
+  //   });
+  // }, []);
   return (
     <>
       <ToastContainer
@@ -202,13 +216,13 @@ const SignUp = () => {
                   </label>
                   <div className="relative">
                     <input
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          name: e.target.value,
-                        });
-                      }}
-                      value={formData.name}
+                      // onChange={(e) => {
+                      //   setFormData({
+                      //     ...formData,
+                      //     name: e.target.value,
+                      //   });
+                      // }}
+                      ref={nameRef}
                       type="text"
                       placeholder="Enter your full name"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -244,13 +258,13 @@ const SignUp = () => {
                   </label>
                   <div className="relative">
                     <input
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          email: e.target.value,
-                        });
-                      }}
-                      value={formData.email}
+                      // onChange={(e) => {
+                      //   setFormData({
+                      //     ...formData,
+                      //     email: e.target.value,
+                      //   });
+                      // }}
+                      ref={emailRef}
                       type="email"
                       placeholder="Enter your email"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -282,13 +296,13 @@ const SignUp = () => {
                   </label>
                   <div className="relative">
                     <input
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          password: e.target.value,
-                        });
-                      }}
-                      value={formData.password}
+                      // onChange={(e) => {
+                      //   setFormData({
+                      //     ...formData,
+                      //     password: e.target.value,
+                      //   });
+                      // }}
+                      ref={passwordRef}
                       type="password"
                       placeholder="Enter your password"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -324,13 +338,13 @@ const SignUp = () => {
                   </label>
                   <div className="relative">
                     <input
-                      value={formData.retypePassword}
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          retypePassword: e.target.value,
-                        });
-                      }}
+                      ref={retypePasswordRef}
+                      // onChange={(e) => {
+                      //   setFormData({
+                      //     ...formData,
+                      //     retypePassword: e.target.value,
+                      //   });
+                      // }}
                       type="password"
                       placeholder="Re-enter your password"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
